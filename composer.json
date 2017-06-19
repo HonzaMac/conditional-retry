@@ -1,0 +1,27 @@
+{
+  "name": "honzamac/conditional-retry",
+  "description": "Conditionally retry any third party api call",
+  "keywords": [
+    "failure",
+    "retry",
+    "conditionally retry"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jan Machala",
+      "email": "honza.machala@seznam.cz"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.2"
+  },
+  "autoload": {
+    "files": [
+      "src/conditional-retry.php"
+    ]
+  }
+}
