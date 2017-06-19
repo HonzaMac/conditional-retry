@@ -1,9 +1,11 @@
 # Conditional retry
 
-
 Conditionally retry any third party api call.
 
 Sometimes network connection is not working properly and we would like to retry api call. Using this tiny library you can easily retry any action based on specific error condition throwed by exception or returned value.
+
+[![Build Status](https://travis-ci.org/HonzaMac/conditional-retry.svg?branch=master)](https://travis-ci.org/HonzaMac/conditional-retry)
+
 
 ## Usage
 
