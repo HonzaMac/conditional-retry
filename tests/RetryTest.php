@@ -2,7 +2,9 @@
 
 namespace Bileto\Lib\tests\Utils;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class RetryTest extends TestCase
 {
@@ -83,18 +85,18 @@ class RetryTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Error
      */
     public function testRetrySuccessWithException()
     {
         retryConditional(
-            function () { throw new \LogicException('Error');},
-            function ($value, $exception) { return $exception instanceof \LogicException;}
+            function () { throw new LogicException('Error');},
+            function ($value, $exception) { return $exception instanceof LogicException;}
         );
     }
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage LastError
      */
     public function testChangingExceptionInretryConditional()
@@ -106,12 +108,12 @@ class RetryTest extends TestCase
                     throw new \Exception('Error');
                 }
                 if ($cnt === 1) {
-                    throw new \LogicException('LastError');
+                    throw new LogicException('LastError');
                 }
             },
             function ($value, $exception) use (&$cnt) {
                 $cnt++;
-                return ($exception instanceof \Exception || $exception instanceOf \LogicException);
+                return ($exception instanceof \Exception || $exception instanceOf LogicException);
             }
         ,2);
     }
@@ -136,6 +138,32 @@ class RetryTest extends TestCase
         self::assertEquals('someValue', $returnValue);
     }
 
+    public function testNoRepeatingExceptionInAnotherTry()
+    {
+        $cnt = 0;
+        $returnValue = retryConditional(function () use (&$cnt) {
+            if ($cnt === 0) {
+                throw new LogicException('First run');
+            }
+            if ($cnt === 1) {
+                throw new LogicException('Second run');
+            }
+            return 'value';
+        }, function ($result, Throwable $ex = null) use (&$cnt) {
+            if ($cnt === 0) {
+                self::assertSame('First run', $ex->getMessage());
+            }
+            if ($cnt === 1) {
+                self::assertSame('Second run', $ex->getMessage());
+            }
+            if ($cnt === 2) {
+                self::assertNull($ex);
+            }
+            $cnt++;
+            return true;
+        }, 1000);
 
+        self::assertSame('value', $returnValue);
+    }
 
 }
