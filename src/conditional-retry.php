@@ -26,8 +26,8 @@ if( ! function_exists('retryConditional')) {
 
 		if($errorCondition($result, $currentException)) {
 			if($runs-- > 1) {
-                $currentException = null;
-                goto again;
+				$currentException = null;
+				goto again;
 			}
 		}
 		if($currentException) {
